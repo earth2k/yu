@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ตีโอปออ</title>
+<style>
+body {
+  margin: 0;
+  font-family: 'Comic Sans MS', cursive;
+  background: linear-gradient(to bottom, #a0e7ff, #b4f8c8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1 {
+  font-size: 2.5em;
+  color: #ff4d6d;
+  text-shadow: 2px 2px #fff;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#score, #time {
+  font-size: 1.5em;
+  margin: 5px;
+  color: #333;
+}
+
+#gameArea {
+  position: relative;
+  width: 90vw;  /* ปรับตามหน้าจอ iPad */
+  max-width: 700px;
+  height: 60vh; /* สูงตามความสูงหน้าจอ */
+  background: #ffd6a5;
+  border-radius: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 15px;
+  padding: 15px;
+  box-shadow: 0 0 20px #ffb347;
+}
+
+.hole {
+  position: relative;
+  background: #ffadad;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: inset 0 -10px 10px rgba(0,0,0,0.3);
+}
+
+.mole-img {
+  position: absolute;
+  bottom: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 60%;
+  transition: bottom 0.3s ease;
+}
+
+.mole-img.pop {
+  bottom: 0;
+}
+
+.mole-img.hit {
+  transform: translateX(-50%) scale(0.8);
+  transition: transform 0.1s;
+}
+</style>
+</head>
+<body>
+
+<h1>ตีโอปอออออออออออออออออออ</h1>
+<div id="score">คะแนน: 0</div>
+<div id="time">เวลา: 30 วินาที</div>
+<div id="gameArea">
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+  <div class="hole"><img class="mole-img" src="person.png" alt="Person"></div>
+</div>
+
+<script>
+const moles = document.querySelectorAll('.mole-img');
+let score = 0;
+let time = 30;
+const scoreDisplay = document.getElementById('score');
+const timeDisplay = document.getElementById('time');
+
+function randomMole() {
+  const index = Math.floor(Math.random() * moles.length);
+  return moles[index];
+}
+
+function popMole() {
+  const mole = randomMole();
+  if (mole.classList.contains('pop')) return; // ป้องกันซ้อนกัน
+  mole.classList.add('pop');
+  setTimeout(() => mole.classList.remove('pop'), 800);
+}
+
+// แตะตุ่นได้คะแนน
+moles.forEach(mole => {
+  mole.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (!mole.classList.contains('pop')) return;
+    score++;
+    scoreDisplay.textContent = 'คะแนนแพ้เเน่ๆ: ' + score;
+    mole.classList.add('hit');
+    setTimeout(() => mole.classList.remove('hit'), 200);
+    mole.classList.remove('pop');
+  });
+});
+
+// ตุ่นโผล่ทุก 0.9 วินาที
+const moleInterval = setInterval(popMole, 900);
+
+// นับถอยหลังเวลา
+const timer = setInterval(() => {
+  time--;
+  timeDisplay.textContent = 'เวลา: ' + time + ' วินาที';
+  if (time <= 0) {
+    clearInterval(timer);
+    clearInterval(moleInterval);
+    alert('หมดเวลา! คะแนนของคุณ: ' + score);
+  }
+}, 1000);
+</script>
+
+</body>
+</html>
